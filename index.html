@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>情緒支援與自助工具</title>
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --lavender:     #e8e2f5;
+      --lavender-mid: #c9bbea;
+      --sage:         #d9ead9;
+      --sage-dark:    #a8c5a0;
+      --cream:        #fdf8f0;
+      --peach:        #fce8d8;
+      --peach-dark:   #e8b89a;
+      --text:         #4a3f5c;
+      --text-soft:    #6e6080;
+      --white:        #ffffff;
+      --radius:       18px;
+      --shadow:       0 4px 20px rgba(100, 80, 140, 0.10);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Helvetica Neue', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+      background-color: var(--cream);
+      color: var(--text);
+      line-height: 1.75;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--lavender-mid);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .site-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-right: auto;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--text-soft);
+      font-size: 0.88rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 20px;
+      transition: background 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+
+    nav a:hover {
+      background: var(--lavender);
+      color: var(--text);
+    }
+
+    /* Hamburger toggle — mobile only */
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.25rem;
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    @media (max-width: 560px) {
+      .nav-toggle { display: flex; }
+
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0; right: 0;
+        background: rgba(255,255,255,0.97);
+        border-bottom: 1px solid var(--lavender-mid);
+        padding: 0.75rem 1.5rem;
+        flex-direction: column;
+        gap: 0.3rem;
+        z-index: 99;
+      }
+
+      .nav-links.open { display: flex; }
+      nav { position: relative; }
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, var(--lavender) 0%, var(--peach) 50%, var(--sage) 100%);
+      text-align: center;
+      padding: 4rem 1.5rem 3rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.6rem, 5vw, 2.8rem);
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 1rem;
+      letter-spacing: 0.03em;
+    }
+
+    .hero p {
+      font-size: clamp(0.92rem, 2.5vw, 1.1rem);
+      color: var(--text-soft);
+      max-width: 600px;
+      margin: 0 auto 0.6rem;
+    }
+
+    .hero .emoji-row {
+      font-size: 1.8rem;
+      margin-top: 1.2rem;
+      letter-spacing: 0.3rem;
+    }
+
+    .hero-guide {
+      display: inline-block;
+      background: rgba(255,255,255,0.65);
+      border-radius: 14px;
+      padding: 1rem 1.4rem;
+      margin-top: 1.8rem;
+      font-size: 0.9rem;
+      color: var(--text);
+      max-width: 520px;
+      text-align: left;
+      line-height: 1.75;
+      backdrop-filter: blur(4px);
+    }
+
+    .hero-guide strong {
+      display: block;
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-guide .guide-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: baseline;
+      margin-bottom: 0.2rem;
+    }
+
+    .hero-guide .guide-row span:first-child {
+      flex-shrink: 0;
+    }
+
+    /* ── Section wrapper ── */
+    .section-bg-cream    { background: var(--cream); }
+    .section-bg-tipp     { background: linear-gradient(180deg, var(--cream) 0%, var(--lavender) 100%); }
+    .section-bg-senses   { background: linear-gradient(180deg, var(--lavender) 0%, var(--sage) 100%); }
+
+    section {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 3.5rem 1.5rem;
+    }
+
+    .section-label {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--white);
+      background: var(--lavender-mid);
+      border-radius: 20px;
+      padding: 0.25rem 0.85rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-label.sage  { background: var(--sage-dark); }
+    .section-label.peach { background: var(--peach-dark); }
+
+    section h2 {
+      font-size: clamp(1.3rem, 4vw, 1.9rem);
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 0.6rem;
+    }
+
+    .intro {
+      color: var(--text-soft);
+      font-size: 0.97rem;
+      max-width: 700px;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── Tip / callout box ── */
+    .tip-box {
+      display: flex;
+      gap: 0.9rem;
+      border-radius: 14px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 2rem;
+      align-items: flex-start;
+      font-size: 0.92rem;
+      color: var(--text);
+    }
+
+    .tip-box.lavender { background: var(--lavender); }
+    .tip-box.sage     { background: var(--sage); }
+    .tip-box.peach    { background: var(--peach); }
+
+    .tip-box .tip-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 0.05rem; }
+
+    .tip-box p { margin: 0; line-height: 1.65; }
+    .tip-box p + p { margin-top: 0.45rem; }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 0.85rem 1.2rem 0.6rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-soft);
+      border-bottom: 1px solid var(--lavender);
+    }
+
+    /* ── Breathing section ── */
+    .breathing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.75rem;
+      align-items: start;
+    }
+
+    @media (max-width: 640px) {
+      .breathing-grid { grid-template-columns: 1fr; }
+    }
+
+    /* YouTube embed */
+    .video-wrap {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+    }
+
+    .video-wrap iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      border: none;
+    }
+
+    .video-note {
+      font-size: 0.8rem;
+      color: var(--text-soft);
+      margin-top: 0.5rem;
+      padding-left: 0.25rem;
+    }
+
+    /* Breathing circle card */
+    .breath-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .breath-card .card-header {
+      width: 100%;
+      padding: 0 0 0.6rem;
+      border-bottom: 1px solid var(--lavender);
+      margin-bottom: 0.1rem;
+    }
+
+    #breath-circle-container {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #breath-ring {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--lavender-mid) 0%, var(--lavender) 60%, transparent 70%);
+      transition: transform 4s ease-in-out;
+      transform: scale(0.6);
+    }
+
+    #breath-inner {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+
+    #breath-phase {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text);
+      display: block;
+    }
+
+    #breath-count {
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: var(--lavender-mid);
+      display: block;
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .breath-info {
+      font-size: 0.82rem;
+      color: var(--text-soft);
+      text-align: center;
+      line-height: 1.55;
+    }
+
+    .breath-controls { display: flex; gap: 0.75rem; }
+
+    .btn {
+      border: none;
+      border-radius: 20px;
+      padding: 0.5rem 1.4rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .btn:active { transform: scale(0.96); }
+    .btn-primary { background: var(--lavender-mid); color: var(--white); }
+    .btn-ghost   { background: var(--lavender); color: var(--text-soft); }
+    .btn:hover   { opacity: 0.85; }
+
+    /* Steps list */
+    .steps-heading {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-soft);
+      margin: 2.5rem 0 0.75rem;
+    }
+
+    .steps-list {
+      list-style: none;
+      counter-reset: steps;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+
+    .steps-list li {
+      counter-increment: steps;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.85rem;
+      background: var(--white);
+      border-radius: 12px;
+      padding: 0.85rem 1.1rem;
+      box-shadow: var(--shadow);
+      font-size: 0.93rem;
+    }
+
+    .steps-list li::before {
+      content: counter(steps);
+      flex-shrink: 0;
+      width: 26px;
+      height: 26px;
+      background: var(--lavender-mid);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.82rem;
+      margin-top: 0.1rem;
+    }
+
+    .step-body strong {
+      display: block;
+      font-size: 0.95rem;
+      margin-bottom: 0.15rem;
+      color: var(--text);
+    }
+
+    .step-body p {
+      color: var(--text-soft);
+      font-size: 0.87rem;
+      margin: 0;
+      line-height: 1.55;
+    }
+
+    /* Notice box */
+    .notice-box {
+      display: flex;
+      gap: 0.65rem;
+      align-items: flex-start;
+      border-radius: 12px;
+      padding: 0.9rem 1.1rem;
+      margin-top: 1rem;
+      font-size: 0.88rem;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .notice-box.peach  { background: var(--peach); }
+    .notice-box.sage   { background: var(--sage); }
+
+    /* ── Image card ── */
+    .image-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.25rem;
+      text-align: center;
+      cursor: zoom-in;
+      transition: box-shadow 0.2s;
+    }
+
+    .image-card:hover { box-shadow: 0 6px 28px rgba(100,80,140,0.18); }
+
+    .image-card img {
+      width: 100%;
+      max-width: 560px;
+      height: auto;
+      border-radius: 10px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .image-caption {
+      font-size: 0.78rem;
+      color: var(--text-soft);
+      margin-top: 0.6rem;
+    }
+
+    /* ── TIPP cards ── */
+    .tipp-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 600px) {
+      .tipp-grid { grid-template-columns: 1fr; }
+    }
+
+    .tipp-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.2rem;
+      border-top: 4px solid var(--lavender-mid);
+    }
+
+    .tipp-card.t-card  { border-top-color: #88c4e8; }
+    .tipp-card.i-card  { border-top-color: #f0a8a8; }
+    .tipp-card.pb-card { border-top-color: var(--lavender-mid); }
+    .tipp-card.pm-card { border-top-color: var(--sage-dark); }
+
+    .tipp-card h3 {
+      font-size: 0.97rem;
+      font-weight: 800;
+      margin-bottom: 0.3rem;
+      color: var(--text);
+    }
+
+    .tipp-card .tipp-why {
+      font-size: 0.81rem;
+      color: var(--text-soft);
+      margin-bottom: 0.75rem;
+      font-style: italic;
+      line-height: 1.5;
+    }
+
+    .tipp-steps {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .tipp-steps li {
+      font-size: 0.87rem;
+      color: var(--text);
+      padding-left: 1.1rem;
+      position: relative;
+      line-height: 1.5;
+    }
+
+    .tipp-steps li::before {
+      content: '›';
+      position: absolute;
+      left: 0;
+      font-weight: 900;
+      color: var(--lavender-mid);
+    }
+
+    .tipp-card.t-card  .tipp-steps li::before { color: #88c4e8; }
+    .tipp-card.i-card  .tipp-steps li::before { color: #f0a8a8; }
+    .tipp-card.pm-card .tipp-steps li::before { color: var(--sage-dark); }
+
+    /* ── Five senses grid ── */
+    .senses-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.9rem;
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 760px) {
+      .senses-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 400px) {
+      .senses-grid { grid-template-columns: 1fr; }
+    }
+
+    .sense-card {
+      background: var(--white);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 1rem 0.9rem;
+    }
+
+    .sense-icon {
+      font-size: 1.8rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .sense-card h3 {
+      font-size: 0.9rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .sense-card ul {
+      list-style: none;
+      padding: 0;
+      font-size: 0.82rem;
+      color: var(--text-soft);
+      line-height: 1.6;
+    }
+
+    .sense-card ul li {
+      padding: 0.2rem 0;
+      border-bottom: 1px solid var(--lavender);
+    }
+
+    .sense-card ul li:last-child { border-bottom: none; }
+
+    /* ── Lightbox ── */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.82);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .lightbox.open { display: flex; }
+
+    .lightbox img {
+      max-width: 100%;
+      max-height: 90vh;
+      border-radius: 12px;
+      object-fit: contain;
+    }
+
+    .lightbox-close {
+      position: fixed;
+      top: 1rem;
+      right: 1.2rem;
+      font-size: 2rem;
+      color: white;
+      cursor: pointer;
+      background: none;
+      border: none;
+      line-height: 1;
+    }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--lavender);
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      font-size: 0.88rem;
+      color: var(--text-soft);
+      line-height: 1.8;
+    }
+
+    footer strong {
+      display: block;
+      font-size: 0.95rem;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+    }
+
+    .divider {
+      margin: 1rem auto;
+      width: 40px;
+      height: 2px;
+      background: var(--lavender-mid);
+      border-radius: 2px;
+    }
+
+    /* ── Back to top ── */
+    .back-to-top {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--lavender-mid);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(100,80,140,0.28);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 90;
+      transition: opacity 0.2s;
+    }
+
+    .back-to-top.visible { display: flex; }
+    .back-to-top:hover { opacity: 0.85; }
+  </style>
+</head>
+<body>
+
+<!-- ── Navigation ── -->
+<nav>
+  <span class="site-title">🌿 情緒支援與自助工具</span>
+
+  <button class="nav-toggle" id="nav-toggle" aria-label="選單">
+    <span></span><span></span><span></span>
+  </button>
+
+  <div class="nav-links" id="nav-links">
+    <a href="#breathing">🌬️ 深呼吸練習</a>
+    <a href="#tipp">🧊 TIPP 技巧</a>
+    <a href="#fivesenses">🌸 五感安撫</a>
+  </div>
+</nav>
+
+<!-- ── Hero ── -->
+<div class="hero">
+  <h1>當情緒困擾時，你不是一個人</h1>
+  <p>情緒波動是人之常情。以下是你與醫生討論過的一些自助工具，</p>
+  <p>幫助你在困難的時刻穩定身心、舒緩痛苦。</p>
+  <div class="emoji-row">🌬️ &nbsp; 🧊 &nbsp; 🌸 &nbsp; 🎵 &nbsp; ☕</div>
+
+  <div class="hero-guide">
+    <strong>📖 怎樣選擇適合的技巧？</strong>
+    <div class="guide-row"><span>🌬️</span><span>情緒有點緊繃、心跳稍快 → 先試試<strong>深呼吸</strong></span></div>
+    <div class="guide-row"><span>⚡</span><span>情緒非常強烈、快要失控 → 用 <strong>TIPP 技巧</strong>快速安撫</span></div>
+    <div class="guide-row"><span>🌸</span><span>想溫柔地照顧自己 → 嘗試<strong>五感安撫</strong></span></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     Section 1 — Deep Breathing
+     ════════════════════════════════ -->
+<div class="section-bg-cream">
+<section id="breathing">
+  <div class="section-label">深呼吸練習</div>
+  <h2>用呼吸安撫神經系統</h2>
+  <p class="intro">
+    當我們感到焦慮或情緒激動時，呼吸會自然變得短促急速。有意識地放慢呼吸，
+    能夠直接啟動副交感神經系統，幫助身體從「戰或逃」的緊繃狀態中平靜下來。
+  </p>
+
+  <div class="tip-box lavender">
+    <span class="tip-icon">💡</span>
+    <div>
+      <p><strong>什麼時候使用？</strong></p>
+      <p>當你感到焦慮、心跳加速、難以集中思考、感覺喘不過氣……這些都是身體告訴你需要休息的訊號。只需 1–2 分鐘的深呼吸，就能讓你感覺稍微平靜一些。可以在任何地方、任何時候進行。</p>
+    </div>
+  </div>
+
+  <div class="breathing-grid">
+
+    <!-- YouTube -->
+    <div>
+      <div class="card">
+        <div class="card-header">🎬 引導影片（跟著聲音做）</div>
+        <div class="video-wrap">
+          <iframe
+            src="https://www.youtube.com/embed/56MkjZa8iuk?si=P-u6VHGtcqxcT7Nh"
+            title="深呼吸引導練習"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+      <p class="video-note">▶ 想要有人帶領？播放影片，跟著聲音一起做。</p>
+    </div>
+
+    <!-- Animated circle -->
+    <div class="breath-card">
+      <div class="card-header" style="width:100%;padding:0 0 0.6rem;border-bottom:1px solid var(--lavender);margin-bottom:0.1rem;">
+        🫧 互動呼吸練習（靜音）
+      </div>
+
+      <div id="breath-circle-container">
+        <div id="breath-ring"></div>
+        <div id="breath-inner">
+          <span id="breath-phase">準備好了嗎？</span>
+          <span id="breath-count">•</span>
+        </div>
+      </div>
+
+      <div class="breath-info">
+        <strong>吸氣 4 拍 · 呼氣 6 拍</strong><br>
+        呼氣比吸氣長，能更有效地啟動副交感神經
+      </div>
+
+      <div class="breath-controls">
+        <button class="btn btn-primary" id="btn-start">開始練習</button>
+        <button class="btn btn-ghost"   id="btn-reset" style="display:none;">重置</button>
+      </div>
+    </div>
+
+  </div><!-- /breathing-grid -->
+
+  <!-- Step-by-step -->
+  <p class="steps-heading">📋 一步一步：怎麼做？</p>
+  <ol class="steps-list">
+    <li>
+      <div class="step-body">
+        <strong>找一個舒適的姿勢</strong>
+        <p>坐著或躺著都可以。如果可以，輕輕閉上眼睛，或把視線放在一個固定的點上。</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-body">
+        <strong>把手輕放在腹部</strong>
+        <p>留意腹部的起伏，而不是胸口。腹式呼吸比胸式呼吸更能啟動放鬆反應。</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-body">
+        <strong>用鼻子慢慢吸氣，數 4 拍</strong>
+        <p>心裡默數：1… 2… 3… 4。感覺腹部輕輕鼓起。</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-body">
+        <strong>用嘴巴慢慢呼氣，數 6 拍</strong>
+        <p>心裡默數：1… 2… 3… 4… 5… 6。慢慢把氣都呼出去，像輕輕吹蠟燭一樣。</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-body">
+        <strong>重複 5–10 次</strong>
+        <p>大約 1–2 分鐘。做完後，靜靜留意一下身體有什麼感覺。</p>
+      </div>
+    </li>
+  </ol>
+
+  <div class="notice-box peach">
+    <span>🌟</span>
+    <p><strong>需要注意：</strong>剛開始練習時，有些人會感覺輕微頭暈，這是正常的。如果出現不適，先暫停，恢復平常呼吸，穩定後再嘗試。練習次數越多，效果越自然。</p>
+  </div>
+
+</section>
+</div>
+
+<!-- ════════════════════════════════
+     Section 2 — TIPP
+     ════════════════════════════════ -->
+<div class="section-bg-tipp">
+<section id="tipp">
+  <div class="section-label sage">TIPP 苦惱耐受技巧</div>
+  <h2>快速重設神經系統的生理技巧</h2>
+  <p class="intro">
+    TIPP 是 DBT（辯證行為治療）中的「苦惱耐受技巧」。這四種技巧直接作用於身體的生理反應，能在短時間內顯著降低情緒的激動程度。
+  </p>
+
+  <div class="tip-box sage">
+    <span class="tip-icon">⚡</span>
+    <div>
+      <p><strong>什麼時候使用 TIPP？</strong></p>
+      <p>當情緒非常強烈、感覺快要失控、難以思考，甚至出現衝動念頭時，TIPP 能幫你快速「降溫」。</p>
+      <p>這不是要你壓抑情緒，而是先讓身體平靜下來，才能更有效地面對問題。</p>
+    </div>
+  </div>
+
+  <!-- Infographic -->
+  <div class="image-card" onclick="openLightbox('dbt_tipp.png', 'TIPP 苦惱耐受技巧')">
+    <img src="dbt_tipp.png" alt="TIPP 苦惱耐受技巧 — 溫度、激烈運動、節律呼吸、肌肉漸進放鬆" />
+    <p class="image-caption">👆 點擊圖片可放大查看</p>
+  </div>
+
+  <!-- Four TIPP cards -->
+  <div class="tipp-grid">
+
+    <div class="tipp-card t-card">
+      <h3>🧊 T — 溫度（Temperature）</h3>
+      <p class="tipp-why">用冷刺激啟動「潛水反射」，迅速減慢心跳，降低情緒激動</p>
+      <ul class="tipp-steps">
+        <li>取一盆冷水（可加冰塊），深吸一口氣</li>
+        <li>把臉浸入冷水約 30 秒</li>
+        <li>沒有盆子？用冷毛巾敷在臉頰和前額</li>
+        <li>感覺心跳明顯放慢後，慢慢抬起頭</li>
+      </ul>
+    </div>
+
+    <div class="tipp-card i-card">
+      <h3>🏃 I — 激烈運動（Intense Exercise）</h3>
+      <p class="tipp-why">燃燒多餘的腎上腺素，讓身體從高度警覺狀態中釋放</p>
+      <ul class="tipp-steps">
+        <li>做 20 分鐘的激烈有氧運動</li>
+        <li>快跑、跳繩、跳舞、深蹲均可</li>
+        <li>目標是讓自己喘起來、身體發熱</li>
+        <li>情緒往往在運動後明顯緩和</li>
+      </ul>
+    </div>
+
+    <div class="tipp-card pb-card">
+      <h3>🌬️ P — 節律呼吸（Paced Breathing）</h3>
+      <p class="tipp-why">延長呼氣，啟動副交感神經，讓身體進入「休息」模式</p>
+      <ul class="tipp-steps">
+        <li>用鼻子吸氣，數 4 拍</li>
+        <li>用嘴巴呼氣，數 6 拍（呼氣要比吸氣長）</li>
+        <li>重複 5–10 次，專注在呼氣的感覺上</li>
+        <li>可配合上方的互動呼吸練習使用</li>
+      </ul>
+    </div>
+
+    <div class="tipp-card pm-card">
+      <h3>💆 P — 肌肉漸進放鬆（Paired Muscle Relaxation）</h3>
+      <p class="tipp-why">逐步繃緊再放鬆全身肌肉，系統性釋放身體的緊張感</p>
+      <ul class="tipp-steps">
+        <li>從腳趾開始：用力繃緊 5 秒，然後完全放開</li>
+        <li>依次向上：小腿 → 大腿 → 腹部 → 雙手 → 肩膀 → 臉</li>
+        <li>每組：繃緊 5 秒 → 放鬆 10 秒</li>
+        <li>放鬆時留意肌肉的溫暖和沉重感</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="notice-box sage">
+    <span>💡</span>
+    <p><strong>不知道選哪個？</strong> 手邊有水 → 先試 <strong>T（溫度）</strong>；在家可以走動 → 試 <strong>I（激烈運動）</strong>；在公共場所或辦公室 → 用 <strong>P（節律呼吸）</strong>。緊急時，任何一個都能幫助你度過這一刻。</p>
+  </div>
+
+</section>
+</div>
+
+<!-- ════════════════════════════════
+     Section 3 — Five Senses
+     ════════════════════════════════ -->
+<div class="section-bg-senses">
+<section id="fivesenses">
+  <div class="section-label peach">五感安撫</div>
+  <h2>用五感溫柔地照顧自己</h2>
+  <p class="intro">
+    當情緒強烈或感覺脫離當下時，專注於身邊真實的感官體驗，能幫助我們從「腦海的漩渦」回到「當下的身體」。這是一種溫柔而有效的自我安慰方式。
+  </p>
+
+  <div class="tip-box peach">
+    <span class="tip-icon">🌸</span>
+    <div>
+      <p><strong>什麼時候使用？</strong></p>
+      <p>當你感到焦慮、悲傷、孤單，或情緒低落時，五感安撫能幫助你感受當下的安全和舒適。</p>
+      <p>你不需要全部都做——只選一兩個讓你感覺最舒服的就好。沒有「正確答案」，只有「對你有用的方法」。</p>
+    </div>
+  </div>
+
+  <!-- Infographic -->
+  <div class="image-card" onclick="openLightbox('dbt_5senses.png', '用五感安撫自己')">
+    <img src="dbt_5senses.png" alt="用五感安撫自己 — 視覺、聽覺、嗅覺、味覺、觸覺" />
+    <p class="image-caption">👆 點擊圖片可放大查看</p>
+  </div>
+
+  <!-- Per-sense cards -->
+  <p class="steps-heading">🎯 現在可以試試看</p>
+  <div class="senses-grid">
+
+    <div class="sense-card">
+      <div class="sense-icon">👁️</div>
+      <h3>視覺 Sight</h3>
+      <ul>
+        <li>看一根蠟燭的火焰</li>
+        <li>欣賞窗外的花草或天空</li>
+        <li>翻看一張喜歡的照片</li>
+        <li>留意身邊美麗的顏色</li>
+      </ul>
+    </div>
+
+    <div class="sense-card">
+      <div class="sense-icon">🎵</div>
+      <h3>聽覺 Sound</h3>
+      <ul>
+        <li>播放令你平靜的音樂</li>
+        <li>聆聽大自然的聲音</li>
+        <li>聽頌缽（Singing Bowl）</li>
+        <li>靜靜聆聽周圍的聲音</li>
+      </ul>
+    </div>
+
+    <div class="sense-card">
+      <div class="sense-icon">🌸</div>
+      <h3>嗅覺 Smell</h3>
+      <ul>
+        <li>泡一杯茶，吸入香氣</li>
+        <li>聞一朵花或精油</li>
+        <li>打開窗戶感受雨後清新</li>
+        <li>聞喜歡的護手霜香皂</li>
+      </ul>
+    </div>
+
+    <div class="sense-card">
+      <div class="sense-icon">☕</div>
+      <h3>味覺 Taste</h3>
+      <ul>
+        <li>慢慢品嚐一塊朱古力</li>
+        <li>細細喝一口溫熱的茶</li>
+        <li>感受食物的每一層味道</li>
+        <li>留意甜、酸、苦的感覺</li>
+      </ul>
+    </div>
+
+    <div class="sense-card">
+      <div class="sense-icon">🤗</div>
+      <h3>觸覺 Touch</h3>
+      <ul>
+        <li>裹上柔軟的毛毯</li>
+        <li>泡一個溫暖的手浴</li>
+        <li>輕握一塊光滑的石頭</li>
+        <li>撫摸貓咪或毛絨玩具</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="notice-box peach" style="margin-top:1.5rem;">
+    <span>💛</span>
+    <p><strong>小提示：</strong>每次只需 5–10 分鐘。試著真正專注在那個感覺上——它的質感、溫度、氣味……這種專注本身就是一種正念練習，讓你的心回到當下。</p>
+  </div>
+
+</section>
+</div>
+
+<!-- ── Footer ── -->
+<footer>
+  <strong>💛 請記住</strong>
+  以上工具為自助參考資料，並不能取代專業的心理健康支援。<br>
+  如果你正在經歷持續或嚴重的情緒困擾，請向信任的人或你的醫療團隊尋求協助。
+  <div class="divider"></div>
+  你已經很努力了。照顧自己，是勇敢的一步。🌱
+</footer>
+
+<!-- Back to top -->
+<button class="back-to-top" id="back-to-top" aria-label="回到頂部"
+        onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()" />
+</div>
+
+<!-- ── Scripts ── -->
+<script>
+  /* --- Nav hamburger --- */
+  const navToggle = document.getElementById('nav-toggle');
+  const navLinks  = document.getElementById('nav-links');
+  navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a =>
+    a.addEventListener('click', () => navLinks.classList.remove('open'))
+  );
+
+  /* --- Back to top --- */
+  const backBtn = document.getElementById('back-to-top');
+  window.addEventListener('scroll', () => {
+    backBtn.classList.toggle('visible', window.scrollY > 400);
+  });
+
+  /* --- Lightbox --- */
+  function openLightbox(src, alt) {
+    const img = document.getElementById('lightbox-img');
+    img.src = src;
+    img.alt = alt;
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+  /* --- Breathing animation --- */
+  const ring     = document.getElementById('breath-ring');
+  const phaseEl  = document.getElementById('breath-phase');
+  const countEl  = document.getElementById('breath-count');
+  const btnStart = document.getElementById('btn-start');
+  const btnReset = document.getElementById('btn-reset');
+
+  let running   = false;
+  let counterId = null;
+  let cycleId   = null;
+
+  const INHALE_S = 4;
+  const EXHALE_S = 6;
+
+  function setPhase(phase, durationSec) {
+    const isInhale = phase === 'inhale';
+    phaseEl.textContent = isInhale ? '吸氣 🌬️' : '呼氣 😮‍💨';
+    phaseEl.style.color = isInhale ? '#6b52a8' : '#5a8a72';
+
+    ring.style.transition = `transform ${durationSec}s ease-in-out`;
+    ring.style.transform  = isInhale ? 'scale(1)' : 'scale(0.6)';
+
+    clearInterval(counterId);
+    let t = durationSec;
+    countEl.textContent = t;
+    counterId = setInterval(() => {
+      t--;
+      if (t <= 0) clearInterval(counterId);
+      else countEl.textContent = t;
+    }, 1000);
+  }
+
+  function runCycle() {
+    setPhase('inhale', INHALE_S);
+    cycleId = setTimeout(() => {
+      if (!running) return;
+      setPhase('exhale', EXHALE_S);
+      cycleId = setTimeout(() => {
+        if (running) runCycle();
+      }, EXHALE_S * 1000);
+    }, INHALE_S * 1000);
+  }
+
+  function startBreathing() {
+    running = true;
+    btnStart.textContent = '暫停';
+    btnReset.style.display = 'inline-block';
+    runCycle();
+  }
+
+  function pauseBreathing() {
+    running = false;
+    clearTimeout(cycleId);
+    clearInterval(counterId);
+    phaseEl.textContent = '已暫停';
+    phaseEl.style.color = '';
+    countEl.textContent = '…';
+    ring.style.transition = 'transform 0.5s ease';
+    ring.style.transform  = 'scale(0.8)';
+    btnStart.textContent = '繼續';
+  }
+
+  function resetBreathing() {
+    running = false;
+    clearTimeout(cycleId);
+    clearInterval(counterId);
+    phaseEl.textContent = '準備好了嗎？';
+    phaseEl.style.color = '';
+    countEl.textContent = '•';
+    ring.style.transition = 'transform 0.5s ease';
+    ring.style.transform  = 'scale(0.6)';
+    btnStart.textContent = '開始練習';
+    btnReset.style.display = 'none';
+  }
+
+  btnStart.addEventListener('click', () => {
+    if (btnStart.textContent === '開始練習') startBreathing();
+    else if (running) pauseBreathing();
+    else {
+      running = true;
+      btnStart.textContent = '暫停';
+      runCycle();
+    }
+  });
+
+  btnReset.addEventListener('click', resetBreathing);
+</script>
+
+</body>
+</html>
