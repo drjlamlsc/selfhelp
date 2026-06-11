@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>求助與守護 — 渡過最艱難的時刻</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --lavender:     #e8e2f5;
+      --lavender-mid: #c9bbea;
+      --sage:         #d9ead9;
+      --sage-dark:    #a8c5a0;
+      --cream:        #fdf8f0;
+      --peach:        #fce8d8;
+      --peach-dark:   #e8b89a;
+      --text:         #4a3f5c;
+      --text-soft:    #6e6080;
+      --white:        #ffffff;
+      --alert:        #d9534f;
+      --alert-bg:     #fdeceb;
+      --radius:       18px;
+      --shadow:       0 4px 20px rgba(100, 80, 140, 0.10);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Helvetica Neue', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+      background-color: var(--cream);
+      color: var(--text);
+      line-height: 1.75;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--lavender-mid);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .site-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-right: auto;
+      white-space: nowrap;
+    }
+
+    .nav-links { display: flex; gap: 0.4rem; }
+
+    nav a {
+      text-decoration: none;
+      color: var(--text-soft);
+      font-size: 0.88rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 20px;
+      transition: background 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+
+    nav a:hover { background: var(--lavender); color: var(--text); }
+    nav a.home { background: var(--sage); color: var(--text); }
+
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none; border: none; cursor: pointer;
+      padding: 0.25rem;
+    }
+    .nav-toggle span {
+      display: block; width: 22px; height: 2px;
+      background: var(--text); border-radius: 2px;
+    }
+
+    @media (max-width: 620px) {
+      .nav-toggle { display: flex; }
+      .nav-links {
+        display: none;
+        position: absolute; top: 100%; left: 0; right: 0;
+        background: rgba(255,255,255,0.97);
+        border-bottom: 1px solid var(--lavender-mid);
+        padding: 0.75rem 1.5rem;
+        flex-direction: column; gap: 0.3rem;
+      }
+      .nav-links.open { display: flex; }
+      nav { position: relative; }
+    }
+
+    /* ── Generic section wrapper ── */
+    section {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .banner-img {
+      width: 100%;
+      display: block;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    /* ── Emergency hotline banner ── */
+    .emergency {
+      background: var(--alert-bg);
+      border: 2px solid var(--alert);
+      border-radius: var(--radius);
+      padding: 1.4rem 1.4rem 1.1rem;
+      margin-top: 1.5rem;
+    }
+
+    .emergency h2 {
+      color: var(--alert);
+      font-size: 1.15rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .emergency .lead {
+      font-size: 0.92rem;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+
+    .hotline-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 0.7rem;
+    }
+
+    .hotline {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 0.7rem 0.9rem;
+      text-decoration: none;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #f0d5d3;
+      transition: box-shadow 0.2s, transform 0.1s;
+    }
+    .hotline:hover { box-shadow: var(--shadow); }
+    .hotline:active { transform: scale(0.98); }
+
+    .hotline .name { font-size: 0.82rem; color: var(--text-soft); }
+    .hotline .num {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--alert);
+      letter-spacing: 0.02em;
+    }
+    .hotline.is999 { border-color: var(--alert); background: #fff6f5; }
+    .hotline.is999 .num { font-size: 1.6rem; }
+
+    .hotline-note {
+      font-size: 0.8rem;
+      color: var(--text-soft);
+      margin-top: 0.7rem;
+      line-height: 1.6;
+    }
+
+    /* ── Inline disclaimer ── */
+    .disclaimer-mini {
+      background: var(--lavender);
+      border-radius: 12px;
+      padding: 0.9rem 1.1rem;
+      margin-top: 1rem;
+      font-size: 0.86rem;
+      line-height: 1.65;
+      color: var(--text);
+    }
+    .disclaimer-mini strong { color: var(--alert); }
+
+    /* ── Section intro ── */
+    .section-intro {
+      color: var(--text-soft);
+      font-size: 0.96rem;
+      margin: 1.2rem 0 1.4rem;
+    }
+
+    /* ── Detail cards ── */
+    .detail-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      margin-top: 1.4rem;
+    }
+
+    .detail-card {
+      background: var(--white);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 1rem 1.2rem;
+      border-left: 5px solid var(--lavender-mid);
+    }
+
+    .detail-card h3 {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .detail-card .num-chip {
+      background: var(--lavender-mid);
+      color: white;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.82rem;
+      flex-shrink: 0;
+    }
+
+    .detail-card p {
+      font-size: 0.9rem;
+      color: var(--text-soft);
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .detail-card .tip-link {
+      color: var(--lavender-mid);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .detail-card .tip-link:hover { text-decoration: underline; }
+
+    /* Caregiver cards use peach accent */
+    .caregiver .detail-card { border-left-color: var(--peach-dark); }
+    .caregiver .num-chip { background: var(--peach-dark); }
+
+    /* ── Hope box callout ── */
+    .hopebox {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.4rem;
+      margin-top: 1.6rem;
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 1.4rem;
+      align-items: center;
+    }
+    .hopebox img { width: 100%; border-radius: 12px; display: block; }
+    .hopebox h3 { font-size: 1.05rem; color: var(--text); margin-bottom: 0.5rem; }
+    .hopebox p { font-size: 0.9rem; color: var(--text-soft); margin: 0; }
+    @media (max-width: 560px) {
+      .hopebox { grid-template-columns: 1fr; }
+      .hopebox img { max-width: 240px; margin: 0 auto; }
+    }
+
+    /* ── Full disclaimer / footer ── */
+    .footer-banner { padding: 2rem 1.5rem 0; max-width: 880px; margin: 0 auto; }
+
+    .disclaimer-full {
+      background: var(--lavender);
+      max-width: 880px;
+      margin: 1.5rem auto 0;
+      border-radius: var(--radius);
+      padding: 1.6rem 1.8rem;
+      font-size: 0.9rem;
+      line-height: 1.8;
+      color: var(--text);
+    }
+    .disclaimer-full strong { display: block; color: var(--alert); margin-bottom: 0.5rem; font-size: 1rem; }
+    .disclaimer-full p { margin-bottom: 0.6rem; }
+    .disclaimer-full .big999 { font-weight: 800; color: var(--alert); }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1.5rem 3rem;
+      font-size: 0.9rem;
+      color: var(--text-soft);
+    }
+
+    /* ── Back to top ── */
+    .back-to-top {
+      position: fixed;
+      bottom: 1.5rem; right: 1.5rem;
+      background: var(--lavender-mid);
+      color: white; border: none;
+      border-radius: 50%;
+      width: 44px; height: 44px;
+      font-size: 1.2rem; cursor: pointer;
+      box-shadow: 0 4px 14px rgba(100,80,140,0.28);
+      display: none;
+      align-items: center; justify-content: center;
+      z-index: 90;
+    }
+    .back-to-top.visible { display: flex; }
+  </style>
+</head>
+<body>
+
+<!-- ── Navigation ── -->
+<nav>
+  <span class="site-title">🤍 求助與守護</span>
+  <button class="nav-toggle" id="nav-toggle" aria-label="選單">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="nav-links">
+    <a class="home" href="index.html">🌿 返回主頁</a>
+    <a href="#emergency">📞 緊急求助</a>
+    <a href="#client">🌊 給當事人</a>
+    <a href="#caregiver">🤲 給照顧者</a>
+  </div>
+</nav>
+
+<!-- ── Page header ── -->
+<section>
+  <img class="banner-img" src="crisis_header.png" alt="當情緒最痛苦的時候，請慢慢來，你並不孤單" />
+
+  <!-- Emergency hotlines -->
+  <div class="emergency" id="emergency">
+    <h2>⚠️ 如果情況緊急，請立即求助</h2>
+    <p class="lead">如果你或你身邊的人正面臨<strong>即時危險</strong>，請不要猶豫，立即致電以下熱線，或前往就近醫院急症室。</p>
+
+    <div class="hotline-grid">
+      <a class="hotline is999" href="tel:999">
+        <span class="name">緊急服務（救命危急）</span>
+        <span class="num">999</span>
+      </a>
+      <a class="hotline" href="tel:23892222">
+        <span class="name">撒瑪利亞防止自殺會（24小時）</span>
+        <span class="num">2389 2222</span>
+      </a>
+      <a class="hotline" href="tel:28960000">
+        <span class="name">香港撒瑪利亞會（多種語言）</span>
+        <span class="num">2896 0000</span>
+      </a>
+      <a class="hotline" href="tel:23820000">
+        <span class="name">生命熱線（24小時）</span>
+        <span class="num">2382 0000</span>
+      </a>
+      <a class="hotline" href="tel:24667350">
+        <span class="name">醫管局精神健康專線（24小時）</span>
+        <span class="num">2466 7350</span>
+      </a>
+      <a class="hotline" href="tel:18288">
+        <span class="name">明愛向晴軒（24小時）</span>
+        <span class="num">18288</span>
+      </a>
+    </div>
+
+    <p class="hotline-note">
+      💬 <strong>不想開口說話？</strong>「Open Up」提供 24 小時網上文字輔導服務，你可以用文字慢慢傾訴：
+      <a href="https://www.openup.hk" target="_blank" rel="noopener" style="color:var(--text);font-weight:700;">www.openup.hk</a>
+    </p>
+  </div>
+
+  <!-- Mini disclaimer -->
+  <div class="disclaimer-mini">
+    <strong>請注意：</strong>本頁面為教育及自助參考資料，並不能取代專業的醫療或心理健康評估與治療。以下方法旨在幫助你撐過困難的時刻，但不應取代與你的醫生、治療師或危機支援服務的聯繫。
+  </div>
+</section>
+
+<!-- ════════════════════════════════
+     Part 1 — For the client
+     ════════════════════════════════ -->
+<section id="client">
+  <img class="banner-img" src="crisis_client_header.png" alt="給當事人 — 強烈的衝動會像海浪一樣升起，再退去。你可以撐過這一刻。" />
+
+  <p class="section-intro">
+    當自殺的念頭很強烈時，最重要的是<strong>先撐過此刻</strong>。這些是你可以<strong>自己一個人</strong>做的事，幫助你度過情緒的高峰。你不需要先處理所有問題——只需要安全地渡過現在這一刻。
+  </p>
+
+  <img class="banner-img" src="crisis_client_icons.png" alt="六個自助技巧：爭取時間、收起危險物品、冷靜身體、打開安心盒、撐過此刻、匿名求助" />
+
+  <div class="detail-list">
+    <div class="detail-card">
+      <h3><span class="num-chip">1</span> 爭取時間</h3>
+      <p>衝動會過去。答應自己：「<strong>接下來一小時，我不會做任何事。</strong>」時間到了，再延長一小時。強烈的自殺衝動通常在 20–30 分鐘內達到頂峰，然後慢慢退去。你隨時可以決定，但不是現在——先撐過今晚。</p>
+    </div>
+    <div class="detail-card">
+      <h3><span class="num-chip">2</span> 收起危險物品</h3>
+      <p>把藥物、利器等可能傷害自己的物品鎖起來、交給別人保管，或暫時拿走、丟棄。讓危險的方法變得不容易拿到，能爭取寶貴的緩衝時間——這是最有效的自我保護之一。可以請藥房改為每週配藥，而非一次過大量。</p>
+    </div>
+    <div class="detail-card">
+      <h3><span class="num-chip">3</span> 冷靜身體</h3>
+      <p>用冰敷臉頰、沖冷水洗臉，或洗一個冷水澡。強烈的冷刺激能快速「重設」激動的神經系統，讓你較容易思考。也可以試試<a class="tip-link" href="index.html#tipp">節律呼吸或激烈運動（TIPP 技巧）</a>。</p>
+    </div>
+    <div class="detail-card">
+      <h3><span class="num-chip">4</span> 打開安心盒</h3>
+      <p>在情緒平靜時，預先準備一個「安心盒」：放入重要的照片、給自己的信、活下去的理由、讓你安心的小物。痛苦時打開它，提醒自己：<strong>這一刻會過去，而你值得被好好對待。</strong></p>
+    </div>
+    <div class="detail-card">
+      <h3><span class="num-chip">5</span> 撐過此刻</h3>
+      <p>試試 <strong>5-4-3-2-1 grounding</strong>（說出 5 樣看見的、4 樣聽見的、3 樣摸到的、2 樣聞到的、1 樣嚐到的東西）。把腦海中的想法寫在紙上。<strong>避免酒精和藥物</strong>——它們會減弱自制力、加重衝動。也可以用<a class="tip-link" href="index.html#fivesenses">五感安撫</a>照顧自己。</p>
+    </div>
+    <div class="detail-card">
+      <h3><span class="num-chip">6</span> 匿名求助</h3>
+      <p>你不需要獨自承受。可以致電上方的 24 小時求助熱線，或使用「Open Up」網上文字輔導——你甚至<strong>不需要開口說話</strong>，用文字慢慢說就可以。對方不會批評你，只會陪伴你。</p>
+    </div>
+  </div>
+
+  <!-- Hope box feature -->
+  <div class="hopebox">
+    <img src="crisis_hopebox.png" alt="預先準備你的安心盒：重要的照片、給自己的信、活下去的理由、讓你安心的小物" />
+    <div>
+      <h3>🎁 預先準備你的「安心盒」</h3>
+      <p>在你狀態較好的時候，動手準備一個屬於你的安心盒。當痛苦來襲、腦袋一片混亂時，你未必想得起活下去的理由——這個盒子會替你記得。放入任何能提醒你「<strong>我很重要、這一刻會過去</strong>」的東西。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════
+     Part 2 — For the caregiver
+     ════════════════════════════════ -->
+<section id="caregiver" class="caregiver">
+  <img class="banner-img" src="crisis_caregiver_header.png" alt="給照顧者 — 你的陪伴，就是一份力量。" />
+
+  <p class="section-intro">
+    當你關心的人正受自殺念頭困擾，你可能會感到害怕、無助、不知所措。這些反應都很正常。你不需要「說對每一句話」——<strong>你的在場與關心，本身就是重要的支持。</strong>
+  </p>
+
+  <img class="banner-img" src="crisis_caregiver_icons.png" alt="照顧者六個要點：認真對待、直接詢問、聆聽不批判、不要讓他獨處、陪同求助、照顧好自己" />
+
+  <div class="detail-list">
+    <div class="detail-card">
+      <h3><span class="num-chip">1</span> 認真對待</h3>
+      <p>認真看待每一個求救訊號，不要當作「只是說說而已」或「想引人注意」。當有人透露想結束生命，這往往是他們在用盡力氣發出求救。</p>
+    </div>
+    <div class="detail-card">
+      <h3><span class="num-chip">2</span> 直接詢問</h3>
+      <p>直接、溫和地問：「<strong>你是否有想過傷害自己，或結束自己的生命？</strong>」很多人擔心問了會「把念頭植入對方腦中」——研究顯示<strong>並不會</strong>。直接詢問反而讓對方感到被理解，鬆一口氣。</p>
+    </div>
+    <div class="detail-card">
+      <h3><span class="num-chip">3</span> 聆聽不批判</h3>
+      <p>耐心聆聽，不批評、不說教、不急於給建議或「講道理」。不要說「你想太多了」或「你要堅強」。讓他知道：<strong>他的痛苦被聽見、被接納。</strong>有時候，被理解本身就是一種釋放。</p>
+    </div>
+    <div class="detail-card">
+      <h3><span class="num-chip">4</span> 不要讓他獨處</h3>
+      <p>在危機時刻，盡量陪伴在側，不要讓他獨自一人。同時，溫和地協助移走身邊可能造成傷害的物品（如藥物、利器）。</p>
+    </div>
+    <div class="detail-card">
+      <h3><span class="num-chip">5</span> 陪同求助</h3>
+      <p>協助他聯繫專業協助，或<strong>陪同前往急症室</strong>。你的陪伴讓求助變得不那麼可怕。如情況緊急，立即致電 999。記下上方的求助熱線，需要時隨時可用。</p>
+    </div>
+    <div class="detail-card">
+      <h3><span class="num-chip">6</span> 照顧好自己</h3>
+      <p>照顧一個處於危機的人非常耗心力。<strong>你也需要被照顧。</strong>記得讓自己休息、向信任的人傾訴、尋求支援。你不需要獨自承擔這一切——照顧好自己，才能走得更遠。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer + full disclaimer ── -->
+<div class="footer-banner">
+  <img class="banner-img" src="crisis_footer.png" alt="你的生命很重要。尋求幫助，是堅強的表現。" />
+</div>
+
+<div class="disclaimer-full">
+  <strong>⚠️ 重要聲明</strong>
+  <p>本頁面為教育及自助參考資料，並不能取代專業的醫療或心理健康評估與治療。</p>
+  <p>如果你或你身邊的人正面臨<span class="big999">即時危險</span>，請立即致電 <span class="big999">999</span>，或前往就近醫院急症室求助。</p>
+  <p>這裡的方法旨在幫助你撐過困難的時刻，但<strong>不應取代</strong>與你的醫生、治療師或危機支援服務的聯繫。如情緒持續困擾，請盡快尋求專業協助。</p>
+  <p style="margin-bottom:0;">你的生命很重要。尋求幫助，是堅強的表現。🌱</p>
+</div>
+
+<footer>
+  © 情緒支援與自助工具 · 願你被溫柔以待
+</footer>
+
+<button class="back-to-top" id="back-to-top" aria-label="回到頂部"
+        onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+  const navToggle = document.getElementById('nav-toggle');
+  const navLinks  = document.getElementById('nav-links');
+  navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a =>
+    a.addEventListener('click', () => navLinks.classList.remove('open'))
+  );
+
+  const backBtn = document.getElementById('back-to-top');
+  window.addEventListener('scroll', () => {
+    backBtn.classList.toggle('visible', window.scrollY > 400);
+  });
+</script>
+
+</body>
+</html>
