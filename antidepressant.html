@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>開始服用抗抑鬱藥：陪你渡過適應期</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --lavender:     #e8e2f5;
+      --lavender-mid: #c9bbea;
+      --sage:         #d9ead9;
+      --sage-dark:    #a8c5a0;
+      --cream:        #fdf8f0;
+      --peach:        #fce8d8;
+      --peach-dark:   #e8b89a;
+      --text:         #4a3f5c;
+      --text-soft:    #6e6080;
+      --white:        #ffffff;
+      --alert:        #d9534f;
+      --alert-bg:     #fdeceb;
+      --radius:       18px;
+      --shadow:       0 4px 20px rgba(100, 80, 140, 0.10);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Helvetica Neue', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+      background-color: var(--cream);
+      color: var(--text);
+      line-height: 1.8;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--lavender-mid);
+      padding: 0.75rem 1.5rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .site-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-right: auto; white-space: nowrap; }
+    .nav-links { display: flex; gap: 0.4rem; }
+    nav a {
+      text-decoration: none; color: var(--text-soft); font-size: 0.88rem;
+      padding: 0.35rem 0.85rem; border-radius: 20px;
+      transition: background 0.2s, color 0.2s; white-space: nowrap;
+    }
+    nav a:hover { background: var(--lavender); color: var(--text); }
+    nav a.home { background: var(--sage); color: var(--text); }
+    nav a.nav-crisis { background: var(--alert-bg); color: var(--alert); font-weight: 700; }
+    nav a.nav-crisis:hover { background: #f9d9d6; color: var(--alert); }
+    .nav-toggle { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 0.25rem; }
+    .nav-toggle span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; }
+    @media (max-width: 760px) {
+      .nav-toggle { display: flex; }
+      .nav-links {
+        display: none; position: absolute; top: 100%; left: 0; right: 0;
+        background: rgba(255,255,255,0.97); border-bottom: 1px solid var(--lavender-mid);
+        padding: 0.75rem 1.5rem; flex-direction: column; gap: 0.3rem;
+      }
+      .nav-links.open { display: flex; }
+      nav { position: relative; }
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, var(--lavender) 0%, var(--peach) 50%, var(--sage) 100%);
+      text-align: center; padding: 3.6rem 1.5rem 2.8rem;
+    }
+    .hero h1 { font-size: clamp(1.5rem, 5vw, 2.4rem); font-weight: 800; color: var(--text); margin-bottom: 1.1rem; }
+    .hero p { font-size: clamp(0.92rem, 2.5vw, 1.05rem); color: var(--text-soft); max-width: 640px; margin: 0 auto 0.5rem; }
+    .hero-list {
+      display: inline-block; text-align: left; background: rgba(255,255,255,0.65);
+      border-radius: 14px; padding: 1rem 1.4rem; margin-top: 1.4rem;
+      font-size: 0.9rem; color: var(--text); max-width: 520px; line-height: 1.85;
+    }
+    .hero-key {
+      display: inline-block; background: rgba(255,255,255,0.72);
+      border-radius: 16px; padding: 1.1rem 1.4rem; margin-top: 1.2rem;
+      font-size: 0.96rem; color: var(--text); max-width: 560px; line-height: 1.85;
+    }
+    .hero-key strong { color: var(--text); }
+
+    /* ── Section shell ── */
+    section { max-width: 1000px; margin: 0 auto; padding: 2.8rem 1.5rem 1rem; }
+    section > h2 { font-size: clamp(1.3rem, 4vw, 1.7rem); margin-bottom: 0.5rem; text-align: center; }
+    section > .lead { color: var(--text-soft); font-size: 0.95rem; text-align: center; max-width: 660px; margin: 0 auto 1.6rem; }
+
+    /* ── Timeline strip ── */
+    .timeline-strip {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
+    }
+    @media (max-width: 700px) { .timeline-strip { grid-template-columns: repeat(2, 1fr); } }
+    .timeline-strip img {
+      width: 100%; border-radius: 14px; box-shadow: var(--shadow);
+      display: block; cursor: zoom-in; transition: transform 0.15s;
+    }
+    .timeline-strip img:hover { transform: translateY(-3px); }
+
+    /* ── Side-effect cards ── */
+    .se-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.4rem; }
+    @media (max-width: 640px) { .se-grid { grid-template-columns: 1fr; } }
+
+    .se-card { background: var(--white); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; }
+    .se-card img { width: 100%; display: block; cursor: zoom-in; }
+    .se-body { padding: 1rem 1.2rem 1.2rem; font-size: 0.89rem; color: var(--text); line-height: 1.75; }
+    .se-body .row { margin-bottom: 0.55rem; }
+    .se-body .row:last-child { margin-bottom: 0; }
+    .se-body .row-label { font-weight: 700; color: var(--lavender-mid); margin-right: 0.3rem; }
+
+    /* ── Safety net (alert style) ── */
+    .safety-intro {
+      background: var(--alert-bg); border: 2px solid var(--alert);
+      border-radius: var(--radius); padding: 1.2rem 1.4rem; margin-bottom: 1.6rem;
+      font-size: 0.92rem; color: var(--text); text-align: center;
+    }
+    .safety-intro strong { color: var(--alert); }
+
+    .safety-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2rem; }
+    @media (max-width: 640px) { .safety-grid { grid-template-columns: 1fr; } }
+
+    .safety-card {
+      background: var(--white); border-radius: 14px; box-shadow: var(--shadow);
+      padding: 1.1rem 1.3rem; border-left: 5px solid var(--alert);
+    }
+    .safety-card h3 { font-size: 0.98rem; color: var(--alert); margin-bottom: 0.5rem; display: flex; gap: 0.5rem; align-items: center; }
+    .safety-card p { font-size: 0.87rem; color: var(--text); line-height: 1.7; margin-bottom: 0.4rem; }
+    .safety-card .action { font-weight: 700; color: var(--text); }
+    .safety-card a { color: var(--alert); font-weight: 700; }
+
+    .safety-closer {
+      text-align: center; font-size: 0.9rem; color: var(--text-soft);
+      margin-top: 1.4rem; padding: 0 1rem;
+    }
+
+    /* ── Adherence tips ── */
+    .adherence-list { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; max-width: 700px; margin: 0 auto; }
+    .adherence-list li {
+      background: var(--white); border-radius: 12px; box-shadow: var(--shadow);
+      padding: 0.85rem 1.1rem; font-size: 0.9rem; color: var(--text);
+      display: flex; gap: 0.7rem; align-items: flex-start; line-height: 1.65;
+    }
+    .adherence-list .ic { flex-shrink: 0; font-size: 1.1rem; }
+
+    /* ── Cross-links ── */
+    .links-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+    .link-card {
+      background: var(--white); border-radius: 14px; box-shadow: var(--shadow);
+      padding: 1.1rem 1.2rem; text-decoration: none; color: var(--text);
+      transition: box-shadow 0.2s, transform 0.1s; display: block;
+    }
+    .link-card:hover { box-shadow: 0 6px 28px rgba(100,80,140,0.18); transform: translateY(-2px); }
+    .link-card .ic { font-size: 1.5rem; }
+    .link-card h4 { font-size: 0.98rem; margin: 0.3rem 0 0.2rem; }
+    .link-card p { font-size: 0.83rem; color: var(--text-soft); margin: 0; line-height: 1.5; }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--lavender); text-align: center;
+      padding: 2.5rem 1.5rem; font-size: 0.88rem; color: var(--text-soft);
+      line-height: 1.85; margin-top: 2rem;
+    }
+    footer strong { display: block; font-size: 0.95rem; color: var(--text); margin-bottom: 0.4rem; }
+    .divider { margin: 1rem auto; width: 40px; height: 2px; background: var(--lavender-mid); border-radius: 2px; }
+
+    /* ── Lightbox ── */
+    .lightbox {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.82);
+      z-index: 999; align-items: center; justify-content: center; padding: 1rem;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-width: 100%; max-height: 92vh; border-radius: 12px; }
+    .lightbox-close { position: fixed; top: 1rem; right: 1.2rem; font-size: 2rem; color: white; cursor: pointer; background: none; border: none; line-height: 1; }
+
+    /* ── Back to top ── */
+    .back-to-top {
+      position: fixed; bottom: 1.5rem; right: 1.5rem;
+      background: var(--lavender-mid); color: white; border: none;
+      border-radius: 50%; width: 44px; height: 44px; font-size: 1.2rem;
+      cursor: pointer; box-shadow: 0 4px 14px rgba(100,80,140,0.28);
+      display: none; align-items: center; justify-content: center; z-index: 90;
+    }
+    .back-to-top.visible { display: flex; }
+  </style>
+</head>
+<body>
+
+<!-- ── Navigation ── -->
+<nav>
+  <span class="site-title">💊 抗抑鬱藥服藥指南</span>
+  <button class="nav-toggle" id="nav-toggle" aria-label="選單">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="nav-links">
+    <a class="home" href="index.html">🌿 返回主頁</a>
+    <a href="#timeline">📅 時間表</a>
+    <a href="#sideeffects">🩺 副作用</a>
+    <a href="#safety">⚠️ 求醫警號</a>
+    <a class="nav-crisis" href="crisis.html">🤍 求助與守護</a>
+  </div>
+</nav>
+
+<!-- ── Hero ── -->
+<div class="hero">
+  <h1>開始服用抗抑鬱藥：陪你渡過適應期</h1>
+  <p>開始服用抗抑鬱藥,是照顧自己的重要一步。</p>
+  <p>許多人擔心「服藥會否很難受」。事實是:最初一至兩星期,身體可能會出現一些不適反應,這是常見的過程,而且通常會逐漸消退。</p>
+
+  <div class="hero-list">
+    這一頁希望陪伴你了解:
+    <br>・為什麼副作用往往比療效出現得更早
+    <br>・開始服藥後,身體大致會經歷什麼階段
+    <br>・遇到不適時,可以怎樣應對
+    <br>・什麼情況需要盡快求醫
+  </div>
+
+  <div class="hero-key">
+    💡 <strong>核心概念:副作用來得快,療效來得慢</strong><br>
+    抗抑鬱藥通常在服用首幾天,身體已經開始產生反應,這解釋了為什麼部分人在初期會出現腸胃不適、頭暈或睏倦等症狀。但情緒真正開始好轉,一般需要較長時間。
+    這個「時間差」是正常的藥理現象,並不代表藥物無效,也不代表你不夠努力。<strong>捱過初期的不適,換來的通常是持續而穩定的情緒改善。</strong>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     Timeline
+     ════════════════════════════════ -->
+<section id="timeline">
+  <h2>📅 服藥後的四個階段</h2>
+  <p class="lead">身體適應藥物需要時間。以下是一般情況下,你大致會經歷的過程。</p>
+
+  <div class="timeline-strip">
+    <img src="antidep_week1.png" alt="第一週：噁心、頭暈、睏倦、腸胃不適" onclick="openLightbox('antidep_week1.png')" />
+    <img src="antidep_week2.png" alt="第二週：不適開始減退" onclick="openLightbox('antidep_week2.png')" />
+    <img src="antidep_week2to4.png" alt="第2至4週：情緒漸見改善" onclick="openLightbox('antidep_week2to4.png')" />
+    <img src="antidep_week4to8.png" alt="第4至8週：療效趨向穩定" onclick="openLightbox('antidep_week4to8.png')" />
+  </div>
+
+  <p class="safety-closer">每個人的反應和時間都不同,以上只是一般參考。若到第 8 週仍無明顯改善,應與醫生討論調整劑量或治療方案。</p>
+</section>
+
+<!-- ════════════════════════════════
+     Side effects
+     ════════════════════════════════ -->
+<section id="sideeffects">
+  <h2>🩺 常見副作用與應對方法</h2>
+  <p class="lead">大部分副作用都是暫時性的。認識它們,能讓你更有信心地應對。</p>
+
+  <div class="se-grid">
+
+    <div class="se-card">
+      <img src="antidep_nausea.png" alt="噁心／腸胃不適" onclick="openLightbox('antidep_nausea.png')" />
+      <div class="se-body">
+        <p class="row"><span class="row-label">為什麼：</span>藥物在初期會刺激腸胃的血清素受體。</p>
+        <p class="row"><span class="row-label">應對：</span>飯後服藥而非空腹;由低劑量開始;少食多餐,避免油膩食物;薑茶或薑片可能有助紓緩。</p>
+        <p class="row"><span class="row-label">求醫:</span>持續嚴重嘔吐、無法進食,或出現黑便。</p>
+      </div>
+    </div>
+
+    <div class="se-card">
+      <img src="antidep_headache.png" alt="頭痛" onclick="openLightbox('antidep_headache.png')" />
+      <div class="se-body">
+        <p class="row"><span class="row-label">為什麼：</span>腦內神經傳導物質水平變化,初期常見。</p>
+        <p class="row"><span class="row-label">應對：</span>補充水分;必要時可服用普通止痛藥(如撲熱息痛);保持規律睡眠;避免咖啡因過量。</p>
+        <p class="row"><span class="row-label">求醫:</span>頭痛劇烈、突發,或伴隨視力改變、頸部僵硬。</p>
+      </div>
+    </div>
+
+    <div class="se-card">
+      <img src="antidep_sleep.png" alt="睡眠改變" onclick="openLightbox('antidep_sleep.png')" />
+      <div class="se-body">
+        <p class="row"><span class="row-label">為什麼：</span>不同藥物對睡眠的影響不同,部分令人睏倦,部分則令人較難入睡。</p>
+        <p class="row"><span class="row-label">應對：</span>若嗜睡,可考慮晚上服藥;若失眠,可考慮早上服藥;保持固定睡眠時間;避免日間長時間補眠。</p>
+        <p class="row"><span class="row-label">求醫:</span>嚴重影響日常功能的失眠或嗜睡持續超過 2 至 3 週。</p>
+      </div>
+    </div>
+
+    <div class="se-card">
+      <img src="antidep_anxiety.png" alt="焦躁／坐立不安" onclick="openLightbox('antidep_anxiety.png')" />
+      <div class="se-body">
+        <p class="row"><span class="row-label">為什麼：</span>藥物初期可能暫時提高神經系統的興奮程度。</p>
+        <p class="row"><span class="row-label">應對：</span>由低劑量開始並逐步調高;規律運動有助釋放多餘能量;避免同時攝取大量咖啡因。</p>
+        <p class="row"><span class="row-label">求醫:</span>出現強烈坐立不安、無法靜下來,或情緒念頭加劇(見下方求醫警號)。</p>
+      </div>
+    </div>
+
+    <div class="se-card">
+      <img src="antidep_sexual.png" alt="性功能影響" onclick="openLightbox('antidep_sexual.png')" />
+      <div class="se-body">
+        <p class="row"><span class="row-label">為什麼：</span>血清素水平提高可能影響性慾或性反應。</p>
+        <p class="row"><span class="row-label">應對：</span>與醫生討論調整劑量或服藥時間;部分藥物影響較細,可與醫生商量轉換;不需忍受,這是可以調整的。</p>
+        <p class="row"><span class="row-label">求醫:</span>影響持續且困擾你時,主動向醫生提出。這是常見且可處理的副作用,不用不好意思。</p>
+      </div>
+    </div>
+
+    <div class="se-card">
+      <img src="antidep_tremor.png" alt="手震" onclick="openLightbox('antidep_tremor.png')" />
+      <div class="se-body">
+        <p class="row"><span class="row-label">為什麼：</span>神經系統對藥物的短暫反應。</p>
+        <p class="row"><span class="row-label">應對：</span>通常會隨時間減退;避免過量咖啡因;若影響日常工作,告知醫生調整劑量。</p>
+        <p class="row"><span class="row-label">求醫:</span>震動嚴重、持續不退,或影響精細動作(如寫字)。</p>
+      </div>
+    </div>
+
+    <div class="se-card">
+      <img src="antidep_sweating.png" alt="出汗增多" onclick="openLightbox('antidep_sweating.png')" />
+      <div class="se-body">
+        <p class="row"><span class="row-label">為什麼：</span>藥物影響體溫調節中樞。</p>
+        <p class="row"><span class="row-label">應對：</span>穿著透氣衣物;避免辛辣食物及酒精;隨身帶備替換衣物。</p>
+        <p class="row"><span class="row-label">求醫:</span>出汗伴隨高熱、心跳加速(可能是嚴重反應的警示,見下方)。</p>
+      </div>
+    </div>
+
+    <div class="se-card">
+      <img src="antidep_weight.png" alt="體重變化" onclick="openLightbox('antidep_weight.png')" />
+      <div class="se-body">
+        <p class="row"><span class="row-label">為什麼：</span>部分藥物影響食慾或新陳代謝。</p>
+        <p class="row"><span class="row-label">應對：</span>定期記錄體重;保持均衡飲食及規律運動;變化明顯時與醫生討論。</p>
+        <p class="row"><span class="row-label">求醫:</span>短時間內體重急速轉變(如一個月內超過 5%)。</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════
+     Safety net
+     ════════════════════════════════ -->
+<section id="safety">
+  <h2>⚠️ 何時需要盡快求醫</h2>
+
+  <div class="safety-intro">
+    大部分副作用都是輕微和暫時的。但有少數情況需要<strong>盡快聯絡醫生或求醫</strong>,認識這些警號能讓你更安心地服藥。
+  </div>
+
+  <div class="safety-grid">
+
+    <div class="safety-card">
+      <h3>💭 情緒或念頭轉差</h3>
+      <p>開始服藥的頭幾星期,情緒有時會經歷一些起伏,這是身體適應藥物的過程。如果你留意到自己的情緒明顯轉差,或出現傷害自己的念頭,請不要獨自承受,盡快告訴身邊人或聯絡醫生。</p>
+      <p>年輕人在開始服藥的初期,身邊人的陪伴和留意會特別有幫助,這不是因為藥物特別危險,而是這段適應期本身值得多一份關心。</p>
+      <p class="action">👉 隨時可以聯絡醫生,或前往 <a href="crisis.html">求助與守護</a> 頁面查看支援資源。</p>
+    </div>
+
+    <div class="safety-card">
+      <h3>🌡️ 血清素症候群(罕見但嚴重)</h3>
+      <p>同時出現:高燒、心跳異常加快、肌肉僵硬或抽搐、意識混亂、大量出汗。通常與同時服用其他血清素類藥物或補充劑有關。</p>
+      <p class="action">👉 這是急症,應立即前往急症室。</p>
+    </div>
+
+    <div class="safety-card">
+      <h3>⚡ 情緒或精力突然大變</h3>
+      <p>情緒突然變得異常興奮、精力過剩、睡眠需求大減、思緒飛快、判斷力下降。這可能是潛藏的情緒傾向被藥物誘發出來。</p>
+      <p class="action">👉 盡快聯絡醫生,不要自行停藥或調整劑量。</p>
+    </div>
+
+    <div class="safety-card">
+      <h3>🫁 嚴重過敏反應</h3>
+      <p>皮疹、面部或喉嚨腫脹、呼吸困難。</p>
+      <p class="action">👉 這是急症,應立即求醫。</p>
+    </div>
+
+  </div>
+
+  <p class="safety-closer">如你不肯定某個反應是否需要求醫,寧可主動聯絡醫生或藥劑師確認,這永遠是安全的做法。</p>
+</section>
+
+<!-- ════════════════════════════════
+     Adherence tips
+     ════════════════════════════════ -->
+<section id="adherence">
+  <h2>🗓️ 堅持服藥的小貼士</h2>
+  <p class="lead">規律服藥,是讓藥物發揮效用的關鍵。</p>
+
+  <ul class="adherence-list">
+    <li><span class="ic">⏰</span><span>定時定候服藥,配合日常習慣(如刷牙後、早餐時)建立提示。</span></li>
+    <li><span class="ic">📱</span><span>使用藥盒或手機鬧鐘提醒,減少漏服。</span></li>
+    <li><span class="ic">🚫</span><span>不要因為感覺好轉而自行停藥,突然停藥可能引起不適,調整劑量請與醫生商量。</span></li>
+    <li><span class="ic">💊</span><span>若忘記服藥,可查閱藥物說明或詢問藥劑師應如何補服。</span></li>
+    <li><span class="ic">📝</span><span>覆診前記低想問醫生的問題,例如副作用、劑量或療效的疑問。</span></li>
+  </ul>
+</section>
+
+<!-- ════════════════════════════════
+     Cross-links
+     ════════════════════════════════ -->
+<section id="more">
+  <h2>🔗 配合使用的工具</h2>
+  <p class="lead">服藥期間,這些工具能幫助你記錄狀態、照顧情緒。</p>
+  <div class="links-grid">
+    <a class="link-card" href="moodchart.html">
+      <span class="ic">📊</span>
+      <h4>情緒記錄表</h4>
+      <p>每天記下情緒和睡眠,讓覆診時的討論更具體。</p>
+    </a>
+    <a class="link-card" href="depression.html">
+      <span class="ic">🌤️</span>
+      <h4>抑鬱自助</h4>
+      <p>每天的一小步,陪你渡過情緒低落的日子。</p>
+    </a>
+    <a class="link-card" href="index.html#breathing">
+      <span class="ic">🌬️</span>
+      <h4>深呼吸練習</h4>
+      <p>初期焦躁不安時,先安撫身體。</p>
+    </a>
+    <a class="link-card" href="crisis.html">
+      <span class="ic">🤍</span>
+      <h4>求助與守護</h4>
+      <p>當情緒非常痛苦、有傷害自己的念頭時,這裡有即時的支援。</p>
+    </a>
+  </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer>
+  <strong>💛 請記住</strong>
+  本頁面為教育及自助參考資料,並不能取代醫生的專業評估與治療。<br>
+  每種藥物、每個人的反應都不同,如有任何疑問或不適,請與你的醫生或藥劑師傾談。
+  <div class="divider"></div>
+  適應期會過去。你願意踏出這一步,已經很了不起。🌱
+</footer>
+
+<!-- Back to top -->
+<button class="back-to-top" id="back-to-top" aria-label="回到頂部"
+        onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()" />
+</div>
+
+<script>
+  const navToggle = document.getElementById('nav-toggle');
+  const navLinks  = document.getElementById('nav-links');
+  navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+  const backBtn = document.getElementById('back-to-top');
+  window.addEventListener('scroll', () => backBtn.classList.toggle('visible', window.scrollY > 400));
+
+  function openLightbox(src) {
+    const img = document.getElementById('lightbox-img');
+    img.src = src;
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+</script>
+
+</body>
+</html>
